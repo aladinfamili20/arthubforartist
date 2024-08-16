@@ -11,7 +11,7 @@ const HomePage = () => {
         alt=''/>
 
         <div className='texth1'>
-          <h1>A place for artists.</h1>
+          <h1>A platform for artists.</h1>
         </div>
         <div className='texth2'>
           <h2>

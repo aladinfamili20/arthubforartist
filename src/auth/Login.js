@@ -52,22 +52,22 @@ const Login = () => {
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const user = result.user;
-        if (user) {
-          const ref = doc(db, 'artistHubUsers', user.uid);
-          await setDoc(ref, {
-            displayName: user.displayName,
-            email:user.email,
-            photoURL:user.photoURL,
-            userID: user.uid,
-            hourJoined: Hours,
-            createdAt: today,
-            postTime: date,
-            dateJoined:time,
-           });
-          navigate('/');
-        } else {
-          console.error('No user data available after sign in');
-        }
+        // if (user) {
+        //   const ref = doc(db, 'artistHubUsers', user.uid);
+        //   await setDoc(ref, {
+        //     displayName: user.displayName,
+        //     email:user.email,
+        //     photoURL:user.photoURL,
+        //     userID: user.uid,
+        //     hourJoined: Hours,
+        //     createdAt: today,
+        //     postTime: date,
+        //     dateJoined:time,
+        //    });
+        //   navigate('/');
+        // } else {
+        //   console.error('No user data available after sign in');
+        // }
       })
       .catch((error) => {
         console.log("Error", error);

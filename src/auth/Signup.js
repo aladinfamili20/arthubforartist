@@ -1,109 +1,176 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { auth, db } from '../Data/Firebase';
-import '../Style/Signup.css';
+import React, { useEffect, useState } from "react";
+import "../Style/Login.css";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  OAuthProvider,
+} from "firebase/auth";
+import { auth, db } from "../Data/Firebase";
+import { addDoc, collection, doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { useAuth } from "./AuthContext";
 
-const Registration = () => {
-  const [displayName, setDisplayName] = useState('');
-  const [lastName, setLastName] = useState('');
+const Signup = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState('');
-  const navigate = useNavigate();
+ 
 
-  const RegisterHandler = async (e) => {
+  const onLogin = (e) => {
     e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      const ref = doc(db, 'artistHubUsers', user.uid);
-      await setDoc(ref, {
-        displayName,
-        lastName,
-        email,
-        userID: user.uid,
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        navigate('/');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        alert('User not signed in, with correct credentials');
       });
-      navigate('/profile');
-      console.log('sign up successfully with user ID:', user.uid);
-    } catch (error) {
-      console.log('error signing up', error);
-      if (error.code === "auth/email-already-in-use") {
-        setErrors("Email already in use");
-      } else if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
-        setErrors("Password should be at least 6 characters");
-      } else if (error.code === "auth/operation-not-allowed") {
-        setErrors("Email/password sign-in method is not enabled.");
-      } else {
-        setErrors(error.message);
-      }
-    }
   };
 
+  const signWithGoogle = (setUser, setIsAdmin) => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const today = new Date();
+    const date = today.toDateString();
+    const Hours = today.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const time = today.toLocaleDateString();
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        setUser(user);
+          const ref = doc(db, 'artistHubUsers', user.uid);
+          await setDoc(ref, {
+            displayName: user.displayName,
+            email:user.email,
+            photoURL:user.photoURL,
+            userID: user.uid,
+            hourJoined: Hours,
+            createdAt: today,
+            postTime: date,
+            dateJoined:time,
+           });          
+          navigate('/editprofile');
+
+         
+         
+         
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        const errorCode = error.code;
+        // Handle error
+      });
+  };
+
+  const loginWithYahoo = () => {
+    const auth = getAuth();
+    const provider = new OAuthProvider('yahoo.com');
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = OAuthProvider.credentialFromResult(result);
+        const accessToken = credential.accessToken;
+        const idToken = credential.idToken;
+        navigate('/editprofile');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+ 
   return (
-    <main>
-      <section>
-        <div className='upContainer'>
-          <div className='upContent'>
-            <div className='upImg'>
-              <img src='https://images.unsplash.com/photo-1536849460588-696219a9e98d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1131&q=80' alt='Sign Up' />
-            </div>
-            <div className='upInfo'>
-              <h1>Sign Up</h1>
-              <div className='signupError'>
-                {errors && <span>{errors}</span>}
-              </div>
-              <form onSubmit={RegisterHandler}>
-                <div className='upInfoContents'>
-                  <input 
-                    type='text' 
-                    placeholder='First Name' 
-                    className='signInput' 
-                    value={displayName} 
-                    onChange={(e) => setDisplayName(e.target.value)} 
-                    id='displayName' 
-                  />
-                  <input 
-                    type='text' 
-                    placeholder='Last Name' 
-                    className='signInput' 
-                    value={lastName} 
-                    onChange={(e) => setLastName(e.target.value)} 
-                    id='lastName' 
-                  />
-                  <input 
-                    type='email' 
-                    placeholder='Email' 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    required 
-                    className='signInput' 
-                    id='email' 
-                  />
-                  <input 
-                    type='password' 
-                    placeholder='Password' 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                    className='signInput' 
-                    id='password' 
-                  />
-                  <button className='signButton' type="submit">Sign Up</button>
-                </div>
-              </form>
-              <small>Already have an account? <a href='/login' className='sgnupin'>Sign In</a></small>
-              <small>Artist Signing Up <a href='/register' className='sgnupin'>Artist sign Up</a></small>
+    <div className="loginMainContainer">
+      <section className="loginContainer">
+        <div className="LoginInfo">
+          <h1>Sign up</h1>
+          <div className="LoginInfoConetents">
+            {/* <form>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="LoginInput"
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="LoginInput"
+                id="password"
+              />
+            </form> */}
+
+            {/* <button className="LoginButton" type="submit" onClick={onLogin}>
+              Log in
+            </button>
+            <p>Or log in with:</p> */}
+            <div className="ServiceLogins">
               <div>
-                <small>By signing up, you agree to our <a href='/privacypolicy' style={{textDecoration: 'underline'}}>Privacy and Policy</a>.</small>
+                <div className="faceTweet">
+                  <div className="SocialButtons" onClick={signWithGoogle}>
+                    {" "}
+                    <img
+                      src={require("../assets/Google.png")}
+                      alt="Google logo"
+                    />
+                    <h4> Continue with Google</h4>
+                  </div>
+                  <div className="SocialButtons" onClick={loginWithYahoo}>
+                    <img
+                      src={require("../assets/Yahoo.png")}
+                      alt="Yahoo logo"
+                    />
+                    <h4> Continue with Yahoo</h4>
+                  </div>
+
+                  {/* <div className='SocialButtons'
+      onClick={loginInWithFacebook}>
+       <img src={require('../images/Logos/Facebook.png')} alt='facebook logo'/><h4> Continue with Facebook</h4>
+      </div> */}
+
+                  {/* <div className='SocialButtons'
+      onClick={loginWithTwitter}>
+       <img src={require('../images/Logos/Twitter.png')} alt='facebook logo'/><h4> Continue with Twitter</h4>
+      </div> */}
+                </div>
               </div>
+              <div></div>
             </div>
+            {/* <small>
+              Don't have account?{" "}
+              <a href="/signup" className="sgnupin">
+                Sign up
+              </a>
+            </small> */}
+            {/* <div>
+              <small>
+                By signing up, you agree to our Terms, Data Policy and Cookies
+                Policy.
+              </small>
+            </div> */}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 };
 
-export default Registration;
+// Sign in With Google
+
+export default Signup;

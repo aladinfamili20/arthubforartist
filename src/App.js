@@ -57,7 +57,7 @@ function MainApp() {
         <Route path='/homepage' element={<HomePage />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/signup' element={<Registration />} />
-        <Route path='/addArtwork/:id' element={<AddArtwork />} />
+        <Route path='/postartwork' element={<PostArtwork />} />
         <Route path='/gallery' element={<Gallery />} />
         <Route path='/postgallery' element={<PostGallery />} />
         <Route path='/postevent' element={<PostEvent />} />

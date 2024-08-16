@@ -118,7 +118,7 @@ const deleteProduct = async (id, image) => {
          {getUserName.map((userInfo, index)=>(
           <>
           <div key={index} className='artistProfileCont'>
-            <img src={userInfo.photoURL} width={80} height={80} alt=''/>
+            <img src={userInfo.profImg} width={80} height={80} alt=''/>
             <div>
               <h1>{userInfo.displayName} </h1> 
               <p>Joined: {userInfo.dateJoined}</p>
@@ -134,9 +134,9 @@ const deleteProduct = async (id, image) => {
       <div className='profSection1'>
          
         <h1>Your Artwork(s)
-          {/* {getArtistsInfo.length} */}
+          {''} {getArtistsInfo.length}
           </h1> 
-        <h1>{getArtistsInfo.length}</h1>
+        {/* <h1>{getArtistsInfo.length}</h1> */}
        
         {/* <h2>{displayName}</h2> */}
         <a href='/postartwork'> 
