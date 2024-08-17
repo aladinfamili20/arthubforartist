@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {   useState } from "react";
 import "../Style/Login.css";
 import {
   getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
+   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,16 +10,11 @@ import {
   signInWithPopup,
   OAuthProvider,
 } from "firebase/auth";
-import { auth, db } from "../Data/Firebase";
-import { addDoc, collection, doc, setDoc, Timestamp } from "firebase/firestore";
-import { useAuth } from "./AuthContext";
-
-const Login = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
  
+const Login = () => {
+   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onLogin = (e) => {
     e.preventDefault();
@@ -29,45 +23,24 @@ const Login = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        navigate('/');
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        alert('User not signed in, with correct credentials');
+        alert("User not signed in, with correct credentials");
       });
   };
 
   const signWithGoogle = () => {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-    const today = new Date();
-    const date = today.toDateString();
-    const Hours = today.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const time = today.toLocaleDateString();
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const user = result.user;
-        if (user) {
-          const ref = doc(db, 'artistHubUsers', user.uid);
-          await setDoc(ref, {
-            displayName: user.displayName,
-            email:user.email,
-            photoURL:user.photoURL,
-            userID: user.uid,
-            hourJoined: Hours,
-            createdAt: today,
-            postTime: date,
-            dateJoined:time,
-           });
-          navigate('/');
-        } else {
-          console.error('No user data available after sign in');
-        }
+
+        navigate("/");
       })
       .catch((error) => {
         console.log("Error", error);
@@ -78,24 +51,18 @@ const Login = () => {
 
   const loginWithYahoo = () => {
     const auth = getAuth();
-    const provider = new OAuthProvider('yahoo.com');
+    const provider = new OAuthProvider("yahoo.com");
     signInWithPopup(auth, provider)
       .then((result) => {
         const credential = OAuthProvider.credentialFromResult(result);
         const accessToken = credential.accessToken;
         const idToken = credential.idToken;
-        navigate('/profile');
+        navigate("/profile");
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
-
-
-
-
-
 
   return (
     <div className="loginMainContainer">
@@ -103,28 +70,8 @@ const Login = () => {
         <div className="LoginInfo">
           <h1>Log In</h1>
           <div className="LoginInfoConetents">
-            <form>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="LoginInput"
-              />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="LoginInput"
-                id="password"
-              />
-            </form>
-
-            <button className="LoginButton" type="submit" onClick={onLogin}>
-              Log in
-            </button>
-            <p>Or log in with:</p>
+            
+ 
             <div className="ServiceLogins">
               <div>
                 <div className="faceTweet">

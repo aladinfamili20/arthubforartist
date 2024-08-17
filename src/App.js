@@ -31,6 +31,7 @@ import HelpPrivacy from './pages/Dropdown/Help/HelpPrivacy';
 import Admin from './Components/Admin';
 import PostGallery from './Components/PostGallery';
 import PostEvent from './Components/PostEvent';
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
@@ -57,13 +58,14 @@ function MainApp() {
         <Route path='/homepage' element={<HomePage />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/signup' element={<Registration />} />
-        <Route path='/addArtwork/:id' element={<AddArtwork />} />
+        <Route path='/postartwork' element={<PostArtwork />} />
         <Route path='/gallery' element={<Gallery />} />
         <Route path='/postgallery' element={<PostGallery />} />
         <Route path='/postevent' element={<PostEvent />} />
         <Route path='/event' element={<Events />} />
         <Route path='/shows' element={<Shows />} />
         <Route path='/musuems' element={<Museums />} />
+        <Route path='/editprofile' element={<EditProfile />} />
         <Route path='/stores' element={<Stores />} />
         <Route path='/howto' element={<Howto />} />
         <Route path='/art-hubuniversity' element={<ArtHubUni />} />
