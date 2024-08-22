@@ -133,8 +133,7 @@ const deleteProduct = async (id, image) => {
 
       <div className='profSection1'>
          
-        <h1>Your Artwork(s)
-          {getArtistsInfo.length}
+        <h1>Your Artwork(s){''}{getArtistsInfo.length}
           </h1> 
         {/* <h1>{getArtistsInfo.length}</h1> */}
        

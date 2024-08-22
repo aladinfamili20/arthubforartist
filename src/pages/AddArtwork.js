@@ -164,6 +164,10 @@ const handleImageChange = (e) => {
   );
 };
 
+const generateId = () => {
+  return Math.random().toString(36).substring(6);
+};
+
   // const File = ()=>{
   //   document.getElementById("fileuplaod").click();
   //   }
@@ -177,7 +181,7 @@ const handleImageChange = (e) => {
     // console.log(product);
     setIsLoading(true);
     // handleImageChange()
-
+    const inguireId = generateId()
     try {
       const docRef = addDoc(collection(db, "posts"), {
         name: product.name,
@@ -204,6 +208,7 @@ const handleImageChange = (e) => {
         shipfee:Number(product.shipfee),
         artSize:product.artSize,
         frame:product.frame,
+        inguireId:inguireId,
         material:product.material,
         createdAt: Timestamp.now().toDate(),
       });

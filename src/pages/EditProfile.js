@@ -40,6 +40,7 @@ const initialState = {
   displayName: "",
   type: "",
   bio: "",
+  artitsArtwork: "",
 };
 
 const EditProfile = () => {
@@ -47,7 +48,7 @@ const EditProfile = () => {
   const [product, setProduct] = useState(initialState);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [profImg, setImage] = useState(null);
+  const [artitsArtwork, setImage] = useState(null);
   const [cropper, setCropper] = useState();
   const navigate = useNavigate();
 
@@ -77,7 +78,7 @@ const EditProfile = () => {
   };
 
   const handleFileUpload = (file) => {
-    const storageRef = ref(storage, `profileImages/${Date.now()}_${file.name}`);
+    const storageRef = ref(storage, `profileimages/${Date.now()}_${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -94,12 +95,41 @@ const EditProfile = () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         setProduct((prevProduct) => ({
           ...prevProduct,
-          profImg: downloadURL,
+          artitsArtwork: downloadURL,
         }));
         toast.success("Image uploaded successfully.");
       }
     );
   };
+
+
+
+
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    // console.log(file);
+    const storageRef = ref(storage, `profileimages/${Date.now()}${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        toast.error(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setProduct({ ...product, profImg: downloadURL });
+          toast.success("Image uploaded successfully.");
+        });
+      }
+    );
+  };
+
+
 
   const addProduct = async (e) => {
     e.preventDefault();
@@ -141,7 +171,9 @@ const EditProfile = () => {
         </div>
         <form className="addpostForm" onSubmit={addProduct}>
           <div className="addPost_container">
-            <div className="artInputs">
+             <div className="artInputs">
+            <h2>Artist artwork</h2>
+
               <input
                 type="file"
                 accept="image/*"
@@ -150,12 +182,12 @@ const EditProfile = () => {
                 onChange={handleImageChange}
                 className="image"
               />
-              {profImg && (
+              {artitsArtwork && (
                 <div>
                   <Cropper
                     style={{ height: 400, width: "100%" }}
                     initialAspectRatio={1}
-                    src={profImg}
+                    src={artitsArtwork}
                     viewMode={1}
                     guides={true}
                     minCropBoxHeight={10}
@@ -169,11 +201,36 @@ const EditProfile = () => {
                     }}
                   />
                   <button type="button" onClick={getCropData}>
-                    Crop & Upload Image
+                    Crop
                   </button>
                 </div>
               )}
 
+              <h2>Profile image</h2>
+
+              <input
+                type="file"
+                accept="image/*"
+                placeholder="Product Image"
+                name="image"
+                onChange={handleProfileImageChange}
+                className="image"
+              />
+
+
+              {product.artitsArtwork === "" ? null : (
+                <input
+                  type="text"
+                  // required
+                  placeholder="Image URL"
+                  name="image"
+                  value={product.image}
+                  disabled
+                  style={{display:'none'}}
+                />
+              )}
+
+              
               <div className="AddPostInpCon">
                 <div className="addPostInpCon1">
                   <input

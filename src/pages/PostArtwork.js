@@ -161,9 +161,14 @@ useEffect(() => {
     );
   };
 
+  
+  const generateId = () => {
+    return Math.random().toString(36).substring(6);
+  };
   const addProduct = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    const inguireId = generateId()
 
     try {
       await addDoc(collection(db, "posts"), {
@@ -173,6 +178,7 @@ useEffect(() => {
         userID: user.uid,
         createdAt: Timestamp.now().toDate(),
         displayName: getArtistsName.displayName,
+        inguireId:inguireId,
        });
       setIsLoading(false);
       setUploadProgress(0);
